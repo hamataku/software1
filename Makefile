@@ -1,4 +1,4 @@
-DEPS=main2.o bomb/normal.o map_object/bomb.o map_object/wall.o map_object/nothing.o
+DEPS=main2.o bomb/normal.o map_object/bomb.o map_object/wall.o map_object/nothing.o function/kbhit.c
 
 all: foobar
 

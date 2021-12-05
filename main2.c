@@ -1,5 +1,6 @@
 #include "bomb/bomb.h"
 #include "map_object/map_object.h"
+#include "function/function.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define BOARD_SIZE 5
@@ -165,34 +166,34 @@ void initialize(Map *m) {
     }
 }
 
+
+void Start() {
+  system("clear");
+  printf("Press Space to start\n");
+  while(1){
+    if(kbhit()){
+      char c = getchar();
+      if(c == ' ') return;
+    }
+  }
+}
+
 int main (int argc, char *argv[]) {
-    printf("Press any key to conitnue\n");
 
     Map m;
-//      .board =
-//        {
-//          "-----",
-//          "-#-#-",
-//          "-----",
-//          "-#-#-",
-//          "-----"
-//        }
-//
-//    };
     initialize(&m);
 
     Player p = { .b_p = {.x = 0, .y = 0}
                , .c_p = {.x = 0, .y = 0}
                , .l_b = 1
                };  // 自分の位置
-    int c;
+    Start();
 
-    system("/bin/stty raw onlcr");  // enterを押さなくてもキー入力を受け付けるようになる
-
-    while((c = getchar()) != '.') {   // '.' を押すと抜ける
+    while(1){
+      if(kbhit()){
+        char c = getchar();
         system("clear");
-        printf("Press '.' to close\r\n");
-        printf("You pressed '%c'\r\n", c);
+        printf("You pressed '%c'\n", c);
         move_player(&p, c, m.board);
 
         reflect_bombs(&p, &m);
@@ -202,11 +203,10 @@ int main (int argc, char *argv[]) {
         reflect_board(&m, p);
         int dead = reflect_dead(p, m);
         print_board(m, p);
-        if(dead) printf("Game over!\r\n");
-
+        if(dead) printf("Game over!\n");
+      }
     }
 
-    system("/bin/stty cooked");  // 後始末
 
     return 0;
 }
