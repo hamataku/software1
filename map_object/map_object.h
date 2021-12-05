@@ -12,8 +12,8 @@ struct map_vtable_ {
     const char (*object)(void);
 };
 
-void set_map_object(MapObject *mo, const struct map_vtable_ mv){
-  mo->vtable_ = { mv };
+static inline void set_map_object(MapObject *mo, const struct map_vtable_ *mv){
+  mo->vtable_ = mv;
 }
 
 // wrapper function

@@ -23,24 +23,24 @@ typedef struct map {
     char fire[BOARD_SIZE][BOARD_SIZE + 1];
 } Map;
 
-void move_player(Player *p, char c, const char board[][BOARD_SIZE + 1]) {
+void move_player(Player *p, char c, const MapObject board[][BOARD_SIZE + 1]) {
     p->b_p = p->c_p;
     switch(c) {
       case ('d'):
         if(p->c_p.x+1>=BOARD_SIZE)return;
-        if(board[p->c_p.y][p->c_p.x+1] == '-') ++p->c_p.x;
+        if(object(&board[p->c_p.y][p->c_p.x+1]) == '-') ++p->c_p.x;
         break;
       case ('w'):
         if(p->c_p.y-1<0)return;
-        if(board[p->c_p.y-1][p->c_p.x] == '-') --p->c_p.y;
+        if(object(&board[p->c_p.y-1][p->c_p.x]) == '-') ++p->c_p.x;
         break;
       case ('a'):
         if(p->c_p.x-1<0)return;
-        if(board[p->c_p.y][p->c_p.x-1] == '-') --p->c_p.x;
+        if(object(&board[p->c_p.y][p->c_p.x-1]) == '-') ++p->c_p.x;
         break;
       case ('s'):
         if(p->c_p.y+1>=BOARD_SIZE)return;
-        if(board[p->c_p.y+1][p->c_p.x] == '-') ++p->c_p.y;
+        if(object(&board[p->c_p.y+1][p->c_p.x]) == '-') ++p->c_p.x;
         break;
     }
 }
@@ -128,12 +128,9 @@ void reflect_fire(Map *m) {
 void reflect_board(Map *m, const Player p) {
     for(int x = 0; x < BOARD_SIZE; x++) {
       for(int y = 0; y < BOARD_SIZE; y++) {
-        if(m->bombs[y][x].t>0) m->board[y][x] = MapObject { Bomb };
-        if(m->fire[y][x]) m->board[y][x] = 'F';
-        else if(m->board[y][x] == 'F') m->board[y][x] = '-';
+        if(m->bombs[y][x].t>0) set_map_object(&(m->board[y][x]), BOMB);
       }
     }
-    m->board[p.c_p.y][p.c_p.x] = 'o';
 }
 
 int reflect_dead(const Player p, const Map m) {
@@ -143,18 +140,19 @@ int reflect_dead(const Player p, const Map m) {
 void print_board(const Map m) {
     for(int y = 0; y < BOARD_SIZE; ++y) {
       for(int x = 0; x < BOARD_SIZE; ++x) {
-        printf(bomb_color(&(m.bombs[y][x])));
-        printf("%c", m.board[y][x]);
+        printf("%s", color(&(m.board[y][x])));
+        printf("%c", object(&m.board[y][x]));
         printf("\x1b[49m");
       }
       printf("\r\n");
     }
 }
 
-void initialize(Bomb bombs[][BOARD_SIZE + 1]) {
+void initialize(Map *m) {
     for(int x = 0; x < BOARD_SIZE; x++) {
       for(int y = 0; y < BOARD_SIZE; y++) {
-        bombs[y][x].t = -1;
+        set_map_object(&(m->board[y][x]), NOTHING);
+        m->bombs[y][x].t = -1;
       }
     }
 }
@@ -162,18 +160,18 @@ void initialize(Bomb bombs[][BOARD_SIZE + 1]) {
 int main (int argc, char *argv[]) {
     printf("Press any key to conitnue\n");
 
-    Map m = {
-      .board =
-        {
-          "-----",
-          "-#-#-",
-          "-----",
-          "-#-#-",
-          "-----"
-        }
-
-    };
-    initialize(m.bombs);
+    Map m;
+//      .board =
+//        {
+//          "-----",
+//          "-#-#-",
+//          "-----",
+//          "-#-#-",
+//          "-----"
+//        }
+//
+//    };
+    initialize(&m);
 
     Player p = { .b_p = {.x = 0, .y = 0}
                , .c_p = {.x = 0, .y = 0}
