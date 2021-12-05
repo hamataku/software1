@@ -6,4 +6,4 @@ foobar: $(DEPS)
 	$(CC) $(DEPS) -o $@
 
 clean:
-	rm -f foobar *.o
+	rm -f foobar *.o */*.o

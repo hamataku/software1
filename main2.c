@@ -23,6 +23,12 @@ typedef struct map {
     char fire[BOARD_SIZE][BOARD_SIZE + 1];
 } Map;
 
+void set_map_object(MapObject *mo, const struct map_vtable_ *mv){
+  mo->vtable_ = mv;
+}
+
+
+
 void move_player(Player *p, char c, const MapObject board[][BOARD_SIZE + 1]) {
     p->b_p = p->c_p;
     switch(c) {
@@ -32,15 +38,15 @@ void move_player(Player *p, char c, const MapObject board[][BOARD_SIZE + 1]) {
         break;
       case ('w'):
         if(p->c_p.y-1<0)return;
-        if(object(&board[p->c_p.y-1][p->c_p.x]) == '-') ++p->c_p.x;
+        if(object(&board[p->c_p.y-1][p->c_p.x]) == '-') --p->c_p.y;
         break;
       case ('a'):
         if(p->c_p.x-1<0)return;
-        if(object(&board[p->c_p.y][p->c_p.x-1]) == '-') ++p->c_p.x;
+        if(object(&board[p->c_p.y][p->c_p.x-1]) == '-') --p->c_p.x;
         break;
       case ('s'):
         if(p->c_p.y+1>=BOARD_SIZE)return;
-        if(object(&board[p->c_p.y+1][p->c_p.x]) == '-') ++p->c_p.x;
+        if(object(&board[p->c_p.y+1][p->c_p.x]) == '-') ++p->c_p.y;
         break;
     }
 }
@@ -124,7 +130,6 @@ void reflect_fire(Map *m) {
     }
 }
 
-
 void reflect_board(Map *m, const Player p) {
     for(int x = 0; x < BOARD_SIZE; x++) {
       for(int y = 0; y < BOARD_SIZE; y++) {
@@ -137,12 +142,15 @@ int reflect_dead(const Player p, const Map m) {
     return m.fire[p.c_p.y][p.c_p.x];
 }
 
-void print_board(const Map m) {
+void print_board(const Map m, const Player p) {
     for(int y = 0; y < BOARD_SIZE; ++y) {
       for(int x = 0; x < BOARD_SIZE; ++x) {
-        printf("%s", color(&(m.board[y][x])));
-        printf("%c", object(&m.board[y][x]));
-        printf("\x1b[49m");
+        if(p.c_p.x==x && p.c_p.y==y) printf("%c", 'P');
+        else{
+          printf("%s", color(&(m.board[y][x])));
+          printf("%c", object(&m.board[y][x]));
+          printf("\x1b[49m");
+        }
       }
       printf("\r\n");
     }
@@ -193,7 +201,7 @@ int main (int argc, char *argv[]) {
         reflect_fire(&m);
         reflect_board(&m, p);
         int dead = reflect_dead(p, m);
-        print_board(m);
+        print_board(m, p);
         if(dead) printf("Game over!\r\n");
 
     }

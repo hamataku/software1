@@ -12,9 +12,6 @@ struct map_vtable_ {
     const char (*object)(void);
 };
 
-static inline void set_map_object(MapObject *mo, const struct map_vtable_ *mv){
-  mo->vtable_ = mv;
-}
 
 // wrapper function
 static inline const char *color(const MapObject *map) {

@@ -8,4 +8,4 @@ static const char bomb_object(void) {
     return 'B';
 }
 
-const struct map_vtable_ bomb[] = { { bomb_color, bomb_object } };
+const struct map_vtable_ BOMB[] = { { bomb_color, bomb_object } };

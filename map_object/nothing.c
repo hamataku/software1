@@ -8,4 +8,4 @@ static const char nothing_object(void) {
     return '-';
 }
 
-const struct map_vtable_ nothing[] = { { nothing_color, nothing_object } };
+const struct map_vtable_ NOTHING[] = { { nothing_color, nothing_object } };
